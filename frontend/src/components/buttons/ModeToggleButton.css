@@ -1,0 +1,102 @@
+/* ModeToggleButton.css */
+.toggle-switch-container {
+  display: flex;
+  align-items: center;
+}
+
+.toggle-mode-label {
+  margin-right: 8px;
+  font-size: 0.75rem; /* text-xs for smaller label */
+  color: #4A5568; /* Tailwind gray-700 */
+  font-weight: 500; /* Tailwind font-medium */
+  white-space: nowrap;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;  /* Slightly more compact width */
+  height: 24px; /* Slightly more compact height */
+}
+
+/* Hide default HTML checkbox */
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #CBD5E0; /* Tailwind gray-400 (Human Mode - Off) */
+  -webkit-transition: .3s;
+  transition: .3s;
+  border-radius: 24px; /* Fully rounded */
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px; /* Knob height */
+  width: 18px;  /* Knob width */
+  left: 3px;    /* Position from left */
+  bottom: 3px;  /* Position from bottom */
+  background-color: white;
+  -webkit-transition: .3s;
+  transition: .3s;
+  border-radius: 50%; /* Make knob circular */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+input:checked + .slider {
+  background-color: #4F46E5; /* Tailwind indigo-600 (AI Mode - On) */
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.5); /* Focus ring like Tailwind */
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(20px); /* (width - knob_width - 2*left_offset) = 44 - 18 - 6 = 20 */
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+
+/* Icons inside the slider */
+.slider .icon-ai, .slider .icon-human {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px; /* Adjust for smaller toggle */
+  color: white;
+  transition: opacity 0.2s ease-in-out, color 0.2s ease-in-out;
+  pointer-events: none; /* Ensure clicks go to the input */
+}
+
+.slider .icon-ai {
+  /* content: '🤖'; Using text directly in JSX for better control */
+  right: 5px;
+  opacity: 0;
+}
+
+.slider .icon-human {
+  /* content: '🧑'; Using text directly in JSX for better control */
+  left: 5px;
+  opacity: 1;
+  color: #4A5568; /* Darker color for human icon when off */
+}
+
+input:checked + .slider .icon-ai {
+  opacity: 1;
+  color: white;
+}
+
+input:checked + .slider .icon-human {
+  opacity: 0;
+}
