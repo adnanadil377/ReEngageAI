@@ -2,24 +2,24 @@ from typing import List
 from fastapi import APIRouter, Depends, Path, Request, HTTPException, requests, status # 'requests' import seems unused here, maybe for a specific case later
 from sqlalchemy.orm import Session
 # Corrected or ensured db imports assuming structure
-from backend.db.database import get_db # if get_db is here
+from db.database import get_db # if get_db is here
 # from backend.db.session import get_db # Or if get_db is here, ensure consistency
-from backend.models import user_credentials # Assuming direct import works
-from backend.routers.auth_routes import get_current_user_credential # Assuming path
+from models import user_credentials # Assuming direct import works
+from routers.auth_routes import get_current_user_credential # Assuming path
 # from backend.db.session import SessionLocal # Usually not imported directly in routers
-from backend.models.message import Message
-from backend.controller.user_controller import create_user
-from backend.controller.webhook_controller import receive_webhook, send_whatsapp_message, verify_webhook # Assuming path
-from backend.controller.message_controller import get_messages # Assuming path
-from backend.schemas.send_schema import SendMessageModel # Assuming path
-from backend.schemas.user_schema import UserBotModeUpdateRequest, UserBotModeUpdateResponse, UserModel # Assuming path
+from models.message import Message
+from controller.user_controller import create_user
+from controller.webhook_controller import receive_webhook, send_whatsapp_message, verify_webhook # Assuming path
+from controller.message_controller import get_messages # Assuming path
+from schemas.send_schema import SendMessageModel # Assuming path
+from schemas.user_schema import UserBotModeUpdateRequest, UserBotModeUpdateResponse, UserModel # Assuming path
 
-from backend.models.user import User
-from backend.sio_instance import sio # Assuming path
+from models.user import User
+from sio_instance import sio # Assuming path
 import logging
 
 # Import new routers
-from backend.routers import user_category_routes, message_template_routes, campaign_routes, campaign_analytics_routes
+from routers import user_category_routes, message_template_routes, campaign_routes, campaign_analytics_routes
 
 router = APIRouter() # This is the main router for this module
 

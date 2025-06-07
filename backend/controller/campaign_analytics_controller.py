@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func, case
-from backend.models.campaign import Campaign
-from backend.models.campaign_analytics import CampaignAnalytics, CampaignAnalyticsStatus
-from backend.models.user import User # If needed for user details - included for now
+from models.campaign import Campaign
+from models.campaign_analytics import CampaignAnalytics, CampaignAnalyticsStatus
+from models.user import User # If needed for user details - included for now
 from datetime import datetime
 
 def get_campaign_summary_analytics(db: Session, campaign_id: int) -> dict:

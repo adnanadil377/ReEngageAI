@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from backend.db.session import get_db # Assuming get_db is in backend.db.session
-from backend.controller import campaign_analytics_controller
-from backend.schemas import campaign_analytics_schema # Imports from __init__.py
+# from db.session import get_db # Assuming get_db is in backend.db.session
+from db.database import get_db
+
+from controller import campaign_analytics_controller
+from schemas import campaign_analytics_schema # Imports from __init__.py
 
 router = APIRouter(prefix="/campaign-analytics", tags=["Campaign Analytics"])
 

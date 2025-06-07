@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, func
-from backend.models.campaign import Campaign, CampaignStatus, CampaignScheduleType, CampaignFrequencyLimit
-from backend.models.user import User
-from backend.models.message_template import MessageTemplate
-from backend.models.campaign_analytics import CampaignAnalytics, CampaignAnalyticsStatus
-from backend.models.user_category import UserCategory
-from backend.controller.user_category_controller import get_users_for_category
-from backend.controller.message_controller import send_whatsapp_message # Assuming this path is correct
+from models.campaign import Campaign, CampaignStatus, CampaignScheduleType, CampaignFrequencyLimit
+from models.user import User
+from models.message_template import MessageTemplate
+from models.campaign_analytics import CampaignAnalytics, CampaignAnalyticsStatus
+from models.user_category import UserCategory
+from controller.user_category_controller import get_users_for_category
+from controller.message_controller import send_whatsapp_message # Assuming this path is correct
 from datetime import datetime, timedelta
 import logging
 # from ast import literal_eval # Not needed if filter_criteria is properly handled as JSON by SQLAlchemy

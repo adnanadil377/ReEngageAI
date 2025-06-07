@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 from typing import List
-from backend.db.session import get_db # Assuming get_db is in backend.db.session
-from backend.controller import message_template_controller
-from backend.schemas import message_template_schema # Imports from __init__.py
+# from db.session import get_db # Assuming get_db is in backend.db.session
+from db.database import get_db
+from controller import message_template_controller
+from schemas import message_template_schema # Imports from __init__.py
 
 router = APIRouter(prefix="/message-templates", tags=["Message Templates"])
 

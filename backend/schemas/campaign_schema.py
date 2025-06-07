@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
-from backend.models.campaign import CampaignStatus, CampaignScheduleType, CampaignFrequencyLimit
+from models.campaign import CampaignStatus, CampaignScheduleType, CampaignFrequencyLimit
 
 class CampaignBase(BaseModel):
     name: str

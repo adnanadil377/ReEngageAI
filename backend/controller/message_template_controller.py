@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from backend.models.message_template import MessageTemplate
+from models.message_template import MessageTemplate
 
 def create_message_template(db: Session, name: str, content: str) -> MessageTemplate:
     db_template = MessageTemplate(name=name, content=content)

@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 from typing import List
-from backend.db.session import get_db # Assuming get_db is in backend.db.session
-from backend.controller import campaign_controller
-from backend.schemas import campaign_schema # Imports from __init__.py
-from backend.models.campaign import CampaignStatus, CampaignScheduleType, CampaignFrequencyLimit # For direct use if needed
+# from db.session import get_db # Assuming get_db is in backend.db.session
+from db.database import get_db
+from controller import campaign_controller
+from schemas import campaign_schema # Imports from __init__.py
+from models.campaign import CampaignStatus, CampaignScheduleType, CampaignFrequencyLimit # For direct use if needed
 from datetime import datetime
 
 router = APIRouter(prefix="/campaigns", tags=["Campaigns"])

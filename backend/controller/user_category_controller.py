@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from backend.models.user import User
-from backend.models.user_category import UserCategory
+from models.user import User
+from models.user_category import UserCategory
 from datetime import datetime, timezone
 
 def is_user_in_category(user: User, category_criteria: dict) -> bool:
