@@ -6,6 +6,8 @@ import {
   UserGroupIcon,
   ArrowRightOnRectangleIcon, // For Login/Logout
   UserCircleIcon,           // For Profile
+  TagIcon, // Example for a more specific icon if available and desired - not used yet
+  DocumentTextIcon, // For Message Templates
 } from '@heroicons/react/24/outline';
 import useAuth from '../auth/useAuth'; // Import your useAuth hook
 
@@ -14,8 +16,11 @@ const Header = () => {
   const { isAuthenticated, logout, user } = useAuth(); // Use the auth context
 
   const navigation = [
-    { name: 'Chat', href: '/chat', icon: ChatBubbleLeftRightIcon, showIfAuthenticated: true }, // Only show if authenticated
-    { name: 'Dashboard', href: '/dashboard', icon: ChartPieIcon, showIfAuthenticated: true }, // Only show if authenticated
+    { name: 'Chat', href: '/chat', icon: ChatBubbleLeftRightIcon, showIfAuthenticated: true },
+    { name: 'Dashboard', href: '/dashboard', icon: ChartPieIcon, showIfAuthenticated: true },
+    { name: 'User Categories', href: '/campaigns/categories', icon: UserGroupIcon, showIfAuthenticated: true },
+    { name: 'Message Templates', href: '/campaigns/templates', icon: DocumentTextIcon, showIfAuthenticated: true }, // Added Message Templates
+    // Consider a top-level "Campaigns" link later that leads to a sub-menu or dashboard for all campaign features
   ];
 
   const handleLogoutClick = () => {

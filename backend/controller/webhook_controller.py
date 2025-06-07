@@ -7,10 +7,12 @@ from controller.user_controller import create_user
 from controller.gemini_controller import ai_gemini_response
 from models.user import User
 from models.message import Message
+from models.campaign_analytics import CampaignAnalytics, CampaignAnalyticsStatus # Added
+from sqlalchemy import desc # Added
 from sio_instance import sio
 from dotenv import load_dotenv
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta # Added timedelta
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -123,9 +125,30 @@ async def receive_webhook(request: Request,db: Session):
             logger.info({"wamid":statuses[0].get("id"),"status":statuses[0].get("status")})
             message_to_update = db.query(Message).filter_by(wa_message_id=statuses[0].get("id")).first()
             if message_to_update:
-                message_to_update.status=statuses[0].get("status")
-                db.commit()
-                await sio.emit("message_status_update",{"wamid":statuses[0].get("id"),"wa_id":statuses[0].get("recipient_id"),"status":statuses[0].get("status")})
+                original_message_status = message_to_update.status
+                new_status_from_webhook = statuses[0].get("status")
+                message_to_update.status = new_status_from_webhook
+
+                # Update CampaignAnalytics
+                campaign_analytics_entry = db.query(CampaignAnalytics).filter(
+                    CampaignAnalytics.wa_message_id == statuses[0].get("id")
+                ).first()
+
+                if campaign_analytics_entry:
+                    if new_status_from_webhook == "delivered":
+                        campaign_analytics_entry.status = CampaignAnalyticsStatus.DELIVERED
+                        campaign_analytics_entry.delivered_at = datetime.utcnow()
+                    elif new_status_from_webhook == "read":
+                        campaign_analytics_entry.status = CampaignAnalyticsStatus.READ
+                        campaign_analytics_entry.opened_at = datetime.utcnow()
+                    elif new_status_from_webhook == "failed": # Handle failed status if it comes via webhook
+                       campaign_analytics_entry.status = CampaignAnalyticsStatus.FAILED
+                       # campaign_analytics_entry.failed_reason = statuses[0].get("errors", "N/A") # If error details are provided
+                    db.add(campaign_analytics_entry)
+
+                db.commit() # Commit changes for Message and CampaignAnalytics
+                logger.info(f"Message {message_to_update.wa_message_id} status updated to {new_status_from_webhook}. Campaign analytics updated if linked.")
+                await sio.emit("message_status_update",{"wamid":statuses[0].get("id"),"wa_id":statuses[0].get("recipient_id"),"status":new_status_from_webhook})
             return {"status": "status update received"}
         return {"status": "ignored, no messages"}
 
@@ -170,8 +193,32 @@ async def receive_webhook(request: Request,db: Session):
 
     mess=Message(wa_message_id=wamid,direction="incoming",message_type=wa_type,text_content=wa_message,status="sent",sender=sender1,receiver=receiver1)
     db.add(mess)
-    db.commit()
-    if(sender1.isBot):
+    # db.commit() # Deferred commit
+
+    if sender1: # sender1 is the User object for the incoming message
+        sender1.last_activity_at = datetime.utcnow()
+        db.add(sender1)
+
+        # Try to link reply to a campaign
+        time_window_start = datetime.utcnow() - timedelta(days=7) # Example: 7-day window
+
+        last_campaign_message_analytic = db.query(CampaignAnalytics).filter(
+            CampaignAnalytics.user_id == sender1.user_id,
+            CampaignAnalytics.sent_at >= time_window_start,
+            (CampaignAnalytics.status == CampaignAnalyticsStatus.SENT) | (CampaignAnalytics.status == CampaignAnalyticsStatus.DELIVERED) | (CampaignAnalytics.status == CampaignAnalyticsStatus.READ) # also consider READ as a state that can be replied to
+        ).order_by(desc(CampaignAnalytics.sent_at)).first()
+
+        if last_campaign_message_analytic:
+            # Check if it's not already marked as replied to avoid duplicate updates if webhook retries or similar
+            if last_campaign_message_analytic.status != CampaignAnalyticsStatus.REPLIED:
+                 last_campaign_message_analytic.status = CampaignAnalyticsStatus.REPLIED
+                 last_campaign_message_analytic.replied_at = datetime.utcnow()
+                 db.add(last_campaign_message_analytic)
+                 logger.info(f"Marked campaign analytics ID {last_campaign_message_analytic.id} as REPLIED for user {sender1.user_id}")
+
+    db.commit() # Single commit for new message, user update, and campaign analytics update.
+
+    if(sender1 and sender1.isBot): # Check sender1 exists
         ai_gemini_response(user_phone,wa_message, db)
     
     await sio.emit("incoming_message",{"wamid":wamid,"wa_message":wa_message,"wa_type":wa_type,"user_phone":user_phone,"direction":"incoming"})

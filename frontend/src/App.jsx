@@ -8,6 +8,14 @@ import HomePage from './pages/HomePage';
 import ChatPage from './pages/ChatPage';
 import ProfilePage from "./pages/ProfilePage";
 
+// Import campaign category components
+import UserCategoryList from './features/campaigns/categories/UserCategoryList';
+import UserCategoryForm from './features/campaigns/categories/UserCategoryForm';
+
+// Import campaign template components
+import MessageTemplateList from './features/campaigns/templates/MessageTemplateList';
+import MessageTemplateForm from './features/campaigns/templates/MessageTemplateForm';
+
 const App = () => {
   return (
     // <div>
@@ -23,6 +31,19 @@ const App = () => {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path='/Chat' element={<ChatPage />} />
             <Route path='/dashboard' element={<DashboardPage />} />
+
+            {/* Campaign Management Routes */}
+            {/* User Categories */}
+            <Route path="/campaigns/categories" element={<UserCategoryList />} />
+            <Route path="/campaigns/categories/new" element={<UserCategoryForm />} />
+            <Route path="/campaigns/categories/edit/:categoryId" element={<UserCategoryForm />} />
+
+            {/* Message Templates */}
+            <Route path="/campaigns/templates" element={<MessageTemplateList />} />
+            <Route path="/campaigns/templates/new" element={<MessageTemplateForm />} />
+            <Route path="/campaigns/templates/edit/:templateId" element={<MessageTemplateForm />} />
+
+            {/* Add other campaign routes here later */}
           </Route>
         </Route>
       </Routes>
